@@ -1,0 +1,92 @@
+name: Salesforce CI/CD Git Flow
+
+on:
+  push:
+    branches:
+      - 'feature/**'
+      - develop
+      - main
+
+permissions:
+  contents: write  # Required to allow GitHub Actions to automatically merge branches
+
+jobs:
+  # ------------------------------------------------------------
+  # JOB 1: Automate Feature branch changes merging into Develop
+  # ------------------------------------------------------------
+  sync-feature-to-develop:
+    if: startsWith(github.ref, 'refs/heads/feature/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout code'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 'Automatically Merge Feature into Develop'
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@://github.com"
+          
+          # Fetch develop branch and attempt to merge feature changes into it
+          git checkout develop
+          git merge ${{ github.ref }} --no-ff -m "Automated merge: ${{ github.ref }} into develop"
+          git push origin develop
+
+  # ------------------------------------------------------------
+  # JOB 2: Automate Develop branch changes merging into Main
+  # ------------------------------------------------------------
+  sync-develop-to-main:
+    if: github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout code'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 'Automatically Merge Develop into Main'
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@://github.com"
+          
+          # Fetch main branch and merge develop into it
+          git checkout main
+          git merge develop --no-ff -m "Automated merge: develop into main"
+          git push origin main
+
+  # ------------------------------------------------------------
+  # JOB 3: Deploy to Salesforce DevOrg (Triggered ONLY by Main)
+  # ------------------------------------------------------------
+  deploy-main-to-sf:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout source code'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 'Install Node'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 'Install Salesforce CLI'
+        run: |
+          npm install -g @salesforce/cli
+          sf --version
+
+      - name: 'Populate auth file'
+        run: |
+          echo "${{ secrets.SFDX_AUTH_URL }}" > sfdx_auth.txt
+
+      - name: 'Authenticate to Salesforce Org'
+        run: |
+          sf org login sfdx-url \
+            --sfdx-url-file sfdx_auth.txt \
+            --set-default
+
+      - name: 'Deploy Metadata to DevOrg'
+        run: |
+          sf project deploy start --source-dir force-app --wait 10
