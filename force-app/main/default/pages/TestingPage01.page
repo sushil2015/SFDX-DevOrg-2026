@@ -1,0 +1,42 @@
+<apex:page StandardController="Account" recordSetVar="Account">
+<!--script type="text/javascript">
+alert('hi----');
+var val1 = "{!Account.Notes__c}";
+console.log('val1----',val1);
+var val2 = '{!JSENCODE(Account.Notes__c)}';
+console.log('val2----',val2);
+</script-->
+<div style="height:50px;"></div>
+
+    <apex:form > 
+        <apex:pageblock >
+           <apex:pageblockSection >
+           
+                <!--b style="font-size:15px;">Name:</b> <apex:outputText escape="false" value="{!Account.Name}"></apex:outputText><br/>
+                
+                <b style="font-size:15px;">False:</b> <apex:outputText escape="false" value="{!Account.Notes__c}"></apex:outputText><br/>
+                <b style="font-size:15px;">True:</b> <apex:outputText escape="true" value="{!Account.Notes__c}"></apex:outputText><br/>
+                <b style="font-size:15px;">HTMLENCODE False :</b> <apex:outputText escape="false" value="{!HTMLENCODE(Account.Notes__c)}"></apex:outputText><br/>
+                <b style="font-size:15px;">HTMLENCODE True:</b> <apex:outputText escape="true" value="{!HTMLENCODE(Account.Notes__c)}"></apex:outputText><br/>
+                <b style="font-size:15px;">JSENCODE False:</b> <apex:outputText escape="false" value="{!JSENCODE(Account.Notes__c)}"></apex:outputText><br/>
+                <b style="font-size:15px;">JSENCODE True:</b> <apex:outputText escape="true" value="{!JSENCODE(Account.Notes__c)}"></apex:outputText><br/>
+                
+                <b style="font-size:15px;">HTMLENCODE:</b> <apex:outputText value="{!HTMLENCODE(Account.Notes__c)}"></apex:outputText><br/>
+                <b style="font-size:15px;">JSENCODE:</b> <apex:outputText value="{!JSENCODE(Account.Notes__c)}"></apex:outputText><br/>
+                
+                <b style="font-size:15px;">Escape:</b> <apex:outputText escape="false" value="{!JSINHTMLENCODE(Account.Notes__c)}"></apex:outputText><br/-->
+
+                
+
+                <apex:repeat value="{!Account}" var="acc">
+                    <apex:outputText value="{0,date,MMMM d, yyyy}">
+                        <apex:param value="{!acc.CreatedDate}"/>
+                    </apex:outputText>
+
+                </apex:repeat>
+
+
+        </apex:pageblockSection>
+        </apex:pageblock>
+    </apex:form>    
+</apex:page>

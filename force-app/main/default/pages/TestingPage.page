@@ -1,0 +1,25 @@
+<apex:page Controller="testAccController">
+
+     <!--apex:dynamicComponent componentValue="{!NotesHTMLContent}"/-->
+     
+     <!--apex:dynamicComponent componentValue="{!GadgetHTMLContent3}"/-->
+     
+     <apex:form > 
+        <apex:pageblock >
+           <apex:pageblockSection >
+           
+                
+              
+                Print: <apex:outputText value="{!notes}" escape="false"/>
+
+                //New changes: <!--apex:outputText value="{0, Number, 0.00}"><apex:param value="{!VALUE(HTMLENCODE(TEXT(Order_TotalsMap['netPrice'])))}" /></apex:outputText-->
+ 
+                
+                
+               
+                
+           </apex:pageblockSection>
+        </apex:pageblock>
+    </apex:form>    
+   
+</apex:page>
